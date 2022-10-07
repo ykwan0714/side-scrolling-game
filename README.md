@@ -5,3 +5,4 @@
 
 ## 진행 사항
 01. Player creation / Gravity / Player movement
+02. Platforms / Scroll the background
