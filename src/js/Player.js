@@ -1,6 +1,7 @@
 const gravity = 1
 class Player {
   constructor(canvas) {
+    this.speed = 10
     this.position = {
       x: 100,
       y: 100
@@ -44,7 +45,7 @@ class Player {
       this.velocity.y += gravity
     } else {
       // player가 바닥 (canvas Height에 닿으면 0)
-      this.velocity.y = 0
+      // this.velocity.y = 0 for death
     }
   }
 }

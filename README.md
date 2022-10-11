@@ -7,3 +7,4 @@
 01. Player creation / Gravity / Player movement
 02. Platforms / Scroll the background
 03. Win scenario / Image platforms / Parallax scroll
+04. Death Pits / Level creation
