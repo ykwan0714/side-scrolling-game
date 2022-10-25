@@ -2,6 +2,10 @@ import imgPlatform from '../assets/images/platform.png'
 import imgPlatformSmallTall from '../assets/images/platformSmallTall.png'
 import imgHill from '../assets/images/hills.png'
 import imgBackground from '../assets/images/background.png'
+import imgSpriteRunRight from '../assets/images/spriteRunRight.png'
+import imgSpriteStandRight from '../assets/images/spriteStandRight.png'
+import imgSpriteRunLeft from '../assets/images/spriteRunLeft.png'
+import imgSpriteStandLeft from '../assets/images/spriteStandLeft.png'
 import Platform from './js/Platform'
 import Player from './js/Player'
 import GenericObject from './js/GenericObject'
@@ -14,7 +18,16 @@ canvas.style.border = `1px solid`
 
 const init = async () => {
   const promises = []
-  const images = [imgPlatform, imgHill, imgBackground, imgPlatformSmallTall]
+  const images = [
+    imgPlatform,
+    imgHill,
+    imgBackground,
+    imgPlatformSmallTall,
+    imgSpriteRunRight,
+    imgSpriteStandRight,
+    imgSpriteRunLeft,
+    imgSpriteStandLeft
+  ]
   let loadedCount = 0
   const loadImage = (url) => {
     return new Promise((resolve) => {
@@ -31,31 +44,29 @@ const init = async () => {
     const rv = await Promise.all(promises).catch(() => {
       alert('error')
     })
+    console.log(rv)
     if (rv.length === images.length) {
+      console.log(rv.length, images.length)
       start()
     }
   }
 }
-
+const moveY = 5
 const start = () => {
-  const createImage = (imgSrc) => {
-    const image = new Image()
-    image.src = imgSrc
-    return image
-  }
   const platformImage = createImage(imgPlatform)
   const platformSmallTallImage = createImage(imgPlatformSmallTall)
-  const floorY = 400
+  const floorY = 400 // 바닥 기준 점
+
   // 플랫폼
   let platforms = []
   // 배경들
   let genericObjects = []
   const ctx = canvas.getContext('2d')
   let player
-  let scrollOffest = 0 // player의 이동거리 추적
+  let scrollX = 0 // player의 이동거리 추적
 
   const reset = () => {
-    scrollOffest = 0
+    scrollX = 0
     player = new Player(canvas)
     // 플랫폼
     platforms = [
@@ -75,7 +86,43 @@ const start = () => {
         y: floorY,
         image: platformImage
       }),
+      new Platform(canvas, {
+        x: platformImage.width * 3 + 300,
+        y: floorY - 100,
+        image: platformSmallTallImage
+      }),
+      new Platform(canvas, {
+        x: platformImage.width * 4 + 300,
+        y: floorY - 100,
+        image: platformSmallTallImage
+      }),
 
+      new Platform(canvas, {
+        x: platformImage.width * 5 + 300,
+        y: floorY - 100,
+        image: platformSmallTallImage
+      }),
+      new Platform(canvas, {
+        x: platformImage.width * 6 + 200,
+        y: floorY - 200,
+        image: platformSmallTallImage
+      }),
+
+      new Platform(canvas, {
+        x: platformImage.width * 6 + 600,
+        y: floorY - 600,
+        image: platformSmallTallImage
+      }),
+      new Platform(canvas, {
+        x: platformImage.width * 6 + 400,
+        y: floorY - 400,
+        image: platformSmallTallImage
+      }),
+      new Platform(canvas, {
+        x: platformImage.width * 6 + 100,
+        y: floorY,
+        image: platformImage
+      })
     ]
     // 배경들
     genericObjects = [
@@ -104,7 +151,7 @@ const start = () => {
             player.velocity.y === 0 // 바닥 인 경우에만 점프 가능
           ) {
             player.velocity.y -= 20
-              player.keys.up.pressed = true
+            player.keys.up.pressed = true
           }
           break
         case 39:
@@ -143,7 +190,6 @@ const start = () => {
     const animate = () => {
       ctx.fillStyle = 'white'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
-
       // genericObject 그리기 (배경 등)
       genericObjects.forEach((genericObjects) => {
         genericObjects.draw()
@@ -155,25 +201,33 @@ const start = () => {
 
       player.update()
 
+
+      // 400이 기준 점
       if (player.keys.right.pressed && player.position.x < 400) {
-        player.velocity.x =  player.speed
-      } else if (player.keys.left.pressed && player.position.x > 100) {
+        // 오른쪽 이동
+        player.velocity.x = player.speed
+      } else if (
+        player.keys.left.pressed &&
+        (player.position.x >= 400 || (scrollX === 0 && player.position.x > 0)) // 왼쪽 이동
+      ) {
         player.velocity.x = -player.speed
       } else {
         player.velocity.x = 0
+
         // 배경이동
         if (player.keys.right.pressed) {
-          scrollOffest += player.speed //5
+          scrollX += player.speed //5
           genericObjects.forEach((genericObject) => {
-            genericObject.position.x -= player.speed * .66 //3
+            genericObject.position.x -= player.speed * 0.66 //3
           })
           platforms.forEach((platform) => {
             platform.position.x -= player.speed //5
           })
-        } else if (player.keys.left.pressed) {
-          scrollOffest -= 5
+        } else if (player.keys.left.pressed && scrollX > 0) {
+          // 배경이 움직인 경우에만 플랫폼을 이동해야한다.
+          scrollX -= player.speed
           genericObjects.forEach((genericObject) => {
-            genericObject.position.x += player.speed * .66 //3
+            genericObject.position.x += player.speed * 0.66 //3
           })
           platforms.forEach((platform) => {
             platform.position.x += player.speed //5
@@ -188,14 +242,22 @@ const start = () => {
         if (
           playerYAddHeight <= platform.position.y &&
           playerYAddHeight + player.velocity.y >= platform.position.y &&
-          playerXAddWidth >= platform.position.x &&
-          player.position.x <= platform.position.x + platform.width
+          playerXAddWidth - 20 >= platform.position.x &&
+          player.position.x <= platform.position.x - 20 + platform.width
         ) {
           player.velocity.y = 0
         }
       })
+
+      // 서있다가 달리기 프레임 0 초기화
+      /*
+        if(currentKey === 'right' && player.currentSprite !== player.sprites.run.right) {
+          player.frames = 1
+          player.currentSprite = player.sprites.run.right
+        }
+      */
       // win condition
-      if (scrollOffest >= 2000) {
+      if (scrollX >= 2000) {
         console.log('you win')
       }
       if (player.position.y > canvas.height) {
@@ -210,3 +272,9 @@ const start = () => {
 }
 
 init()
+
+export const createImage = (imgSrc) => {
+  const image = new Image()
+  image.src = imgSrc
+  return image
+}

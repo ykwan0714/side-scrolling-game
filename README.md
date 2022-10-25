@@ -8,3 +8,4 @@
 02. Platforms / Scroll the background
 03. Win scenario / Image platforms / Parallax scroll
 04. Death Pits / Level creation
+05. Fine tuning / Sprite creation

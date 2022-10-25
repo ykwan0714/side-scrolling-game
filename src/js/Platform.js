@@ -2,7 +2,8 @@ class Platform {
   constructor(canvas, { x, y, image }) {
     this.position = {
       x,
-      y
+      y,
+      originY: y
     }
     this.image = image
     this.width = image.width // 200
