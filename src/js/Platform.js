@@ -1,5 +1,5 @@
 class Platform {
-  constructor(canvas, { x, y, image }) {
+  constructor(canvas, { x, y, image, fake }) {
     this.position = {
       x,
       y,
@@ -11,6 +11,7 @@ class Platform {
 
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
+    this.fake = fake || false
   }
   draw() {
     if (this.ctx) {

@@ -2,6 +2,8 @@ import imgSpriteRunRight from '../../assets/images/spriteRunRight.png'
 import imgSpriteStandRight from '../../assets/images/spriteStandRight.png'
 import imgSpriteRunLeft from '../../assets/images/spriteRunLeft.png'
 import imgSpriteStandLeft from '../../assets/images/spriteStandLeft.png'
+import imgSpriteLeft from '../../assets/images/sprite-left.png'
+import imgSpriteRight from '../../assets/images/sprite-right.png'
 import { createImage } from '../index.js'
 const gravity = 1
 class Player {
@@ -101,12 +103,12 @@ class Player {
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
 
-    if (this.position.y + this.height + this.velocity.y <= this.canvas.height) {
+   /*  if (this.position.y + this.height + this.velocity.y <= this.canvas.height) {
       this.velocity.y += gravity
     } else {
       // player가 바닥 (canvas Height에 닿으면 0)
       // this.velocity.y = 0 for death
-    }
+    } */
   }
 }
 

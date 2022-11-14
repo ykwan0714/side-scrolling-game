@@ -13,7 +13,7 @@ import GenericObject from './js/GenericObject'
 document.body.style.overflow = 'hidden'
 const canvas = document.getElementById('canvas')
 canvas.width = 1000 //window.innerWidth
-canvas.height = 500 //window.innerHeight
+canvas.height = 700 //window.innerHeight
 canvas.style.border = `1px solid`
 
 const init = async () => {
@@ -55,7 +55,7 @@ const moveY = 5
 const start = () => {
   const platformImage = createImage(imgPlatform)
   const platformSmallTallImage = createImage(imgPlatformSmallTall)
-  const floorY = 400 // 바닥 기준 점
+  const floorY = 250 // 바닥 기준 점
 
   // 플랫폼
   let platforms = []
@@ -64,64 +64,21 @@ const start = () => {
   const ctx = canvas.getContext('2d')
   let player
   let scrollX = 0 // player의 이동거리 추적
+  let scrollY = 0 // player의 이동거리 추적
 
   const reset = () => {
     scrollX = 0
+    scrollY = 0
     player = new Player(canvas)
     // 플랫폼
     platforms = [
       new Platform(canvas, { x: -1, y: floorY, image: platformImage }),
+      new Platform(canvas, { x: 200, y: floorY + 100, image: platformImage }),
       new Platform(canvas, {
-        x: platformImage.width - 3,
-        y: floorY,
-        image: platformImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 2 + 100,
-        y: floorY - 200,
-        image: platformSmallTallImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 2 + 100,
-        y: floorY,
-        image: platformImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 3 + 300,
-        y: floorY - 100,
-        image: platformSmallTallImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 4 + 300,
-        y: floorY - 100,
-        image: platformSmallTallImage
-      }),
-
-      new Platform(canvas, {
-        x: platformImage.width * 5 + 300,
-        y: floorY - 100,
-        image: platformSmallTallImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 6 + 200,
-        y: floorY - 200,
-        image: platformSmallTallImage
-      }),
-
-      new Platform(canvas, {
-        x: platformImage.width * 6 + 600,
-        y: floorY - 600,
-        image: platformSmallTallImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 6 + 400,
-        y: floorY - 400,
-        image: platformSmallTallImage
-      }),
-      new Platform(canvas, {
-        x: platformImage.width * 6 + 100,
-        y: floorY,
-        image: platformImage
+        x: 300,
+        y: floorY + 200,
+        image: platformImage,
+        fake: true
       })
     ]
     // 배경들
@@ -198,9 +155,23 @@ const start = () => {
       platforms.forEach((platform) => {
         platform.draw()
       })
-
+      console.log(player.position.y + player.height + player.velocity.y)
       player.update()
 
+      // console.log(player.position.y);
+      if (player.position.y > 100 && player.velocity.y > 0) {
+        // player.position.y -= 5
+        player.position.y = 100
+        console.log('@@@@')
+        platforms.forEach((platform) => {
+          platform.position.y -= player.speed //5
+        })
+      } else if (player.position.y < 0 && player.velocity.y < 0) {
+        player.position.y = 0
+        platforms.forEach((platform) => {
+          platform.position.y +=  player.speed//5
+        })
+      }
 
       // 400이 기준 점
       if (player.keys.right.pressed && player.position.x < 400) {
@@ -235,9 +206,11 @@ const start = () => {
         }
       }
 
-      // 플레이어와 플랫폼의 상호 작용
+      // 플레이어와 플랫폼의 상호 작용 (더이상 내려가지 못하도록)
       const playerYAddHeight = player.position.y + player.height
       const playerXAddWidth = player.position.x + player.width
+      let foo = false
+      let fake = false
       platforms.forEach((platform) => {
         if (
           playerYAddHeight <= platform.position.y &&
@@ -245,9 +218,24 @@ const start = () => {
           playerXAddWidth - 20 >= platform.position.x &&
           player.position.x <= platform.position.x - 20 + platform.width
         ) {
+          foo = true
           player.velocity.y = 0
+          if (platform.fake) {
+            fake = true
+          }
         }
       })
+
+      if (foo === false) {
+        console.log('@@@')
+
+          player.velocity.y += 1
+
+      } else if (fake) {
+
+          player.velocity.y -= 30
+
+      }
 
       // 서있다가 달리기 프레임 0 초기화
       /*
@@ -260,10 +248,10 @@ const start = () => {
       if (scrollX >= 2000) {
         console.log('you win')
       }
-      if (player.position.y > canvas.height) {
+      /*  if (player.position.y > canvas.height) {
         console.log('you lose')
         reset()
-      }
+      } */
 
       requestAnimationFrame(animate)
     }
