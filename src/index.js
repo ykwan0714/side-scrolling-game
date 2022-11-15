@@ -55,7 +55,7 @@ const moveY = 5
 const start = () => {
   const platformImage = createImage(imgPlatform)
   const platformSmallTallImage = createImage(imgPlatformSmallTall)
-  const floorY = 250 // 바닥 기준 점
+  const floorY = 300 // 바닥 기준 점
 
   // 플랫폼
   let platforms = []
@@ -159,9 +159,9 @@ const start = () => {
       player.update()
 
       // console.log(player.position.y);
-      if (player.position.y > 100 && player.velocity.y > 0) {
+      if (player.position.y > 150 && player.velocity.y > 0) {
         // player.position.y -= 5
-        player.position.y = 100
+        player.position.y = 150
         console.log('@@@@')
         platforms.forEach((platform) => {
           platform.position.y -= player.speed //5

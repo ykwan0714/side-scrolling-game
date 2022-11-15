@@ -10,8 +10,8 @@ class Player {
   constructor(canvas, image) {
     this.speed = 10
     this.position = {
-      x: 100,
-      y: 100
+      x: 50,
+      y: 50
     }
     this.velocity = {
       x: 0,
@@ -28,24 +28,24 @@ class Player {
         pressed: false
       }
     }
-    this.width = 66 //30
-    this.height = 150 // 30
+    this.width = 77// 66 //30
+    this.height = 68 //150 // 30
     this.canvas = canvas
     this.ctx = canvas.getContext('2d')
-    this.image = createImage(imgSpriteStandRight)
+    this.image = createImage(imgSpriteRight)
     this.frames = 0
     this.spirtes = {
       stand: {
-        right: createImage(imgSpriteStandRight),
-        left: createImage(imgSpriteStandLeft),
-        cropWidth: 177,
-        width: 66
+        right: createImage(imgSpriteRight),
+        left: createImage(imgSpriteLeft),
+        cropWidth: this.width,
+        width: this.width
       },
       run: {
-        right: createImage(imgSpriteRunRight),
-        left: createImage(imgSpriteRunLeft),
-        cropWidth: 341,
-        width: 127.875
+        right: createImage(imgSpriteRight),
+        left: createImage(imgSpriteLeft),
+        cropWidth: this.width,
+        width: this.width
       }
     }
     this.direction = 'right'
@@ -77,10 +77,10 @@ class Player {
 
       this.ctx.drawImage(
         image,
-        cropWidth * this.frames,
+        cropWidth * Math.floor(this.frames / 10),
         0,
         cropWidth, //??
-        400,
+        70,
         x,
         y,
         width,
@@ -94,7 +94,7 @@ class Player {
   // 플레이어의 한계값에 맞게 positon 상태를 갱신하는 메서드
   update() {
     this.frames++
-    if (this.frames > 59 && this.foo === false) {
+    if (this.frames > 35 && this.foo === false) {
       this.frames = 0
     } else if (this.frames > 29 && this.foo ){
       this.frames = 0
